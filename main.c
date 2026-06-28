@@ -2,6 +2,7 @@
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_timer.h>
 #include <stdio.h>
+#include <string.h>
 int main(void){
     SDL_Init(SDL_INIT_AUDIO|SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG);
@@ -20,13 +21,35 @@ int main(void){
     int dir=0;//gonna use 0 for left and 1 for right 
     int frame_d=50;
     int px=300,py=300;
-    FILE file;
+    FILE* file;
     file=fopen("state.txt","r");
     bool running=true;
     SDL_Event event; //bitchass timing the mf wont start
+    char state[100];
     while (running){
-        
-        
+        fscanf(file,"%s",state);
+        if (strcmp(state,"down")){
+                    if(py<590){
+                        py+=10;
+                    }
+        }else if (strcmp(state,"up")){
+            if(py>0){
+                py-=10;
+            }
+
+        }else if (strcmp(state,"left")){
+            if(px<1280 && px>0){
+                px-=10;
+            }
+            dir=0;
+//here i was stuck for about 20 minutes just bcz i used =+ instead of -= .. bruh things be just overreacting walah
+        }else if (strcmp(state,"right")){
+            if(px<1280 && px>0){
+                px+=10;
+            }
+            dir=1;
+
+        }
 
         while(SDL_PollEvent(&event)){
             if (event.type==SDL_QUIT){
@@ -59,6 +82,7 @@ int main(void){
 
             }
         }
+        
         currentime=SDL_GetTicks();
         if (currentime>lastime+frame_d){
             lastime=currentime;
