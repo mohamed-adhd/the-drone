@@ -1,7 +1,7 @@
 #include "headers.h"
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_timer.h>
-
+#include <stdio.h>
 int main(void){
     SDL_Init(SDL_INIT_AUDIO|SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG);
@@ -20,10 +20,12 @@ int main(void){
     int dir=0;//gonna use 0 for left and 1 for right 
     int frame_d=50;
     int px=300,py=300;
-    
+    FILE file;
+    file=fopen("state.txt","r");
     bool running=true;
     SDL_Event event; //bitchass timing the mf wont start
     while (running){
+        
         
 
         while(SDL_PollEvent(&event)){
@@ -66,11 +68,8 @@ int main(void){
         SDL_SetRenderDrawColor(renderer,140,90,180,255);
         SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer,bg,NULL,&bgr);
-        if (py<590){
-            animate(px,py,dir,drone,renderer,currentime,lastime,cur);
-        }else{
-            statcd(px,py,dir,dronest,renderer);
-        }
+        animate(px,py,dir,drone,renderer,currentime,lastime,cur);
+        
         SDL_RenderPresent(renderer);
         SDL_Delay(16);
     }
