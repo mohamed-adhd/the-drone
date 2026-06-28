@@ -33,25 +33,24 @@ int main(void){
         fscanf(file,"%s",state);
         if (strcmp(state,"down")==0){
             if(py<720){
-                py+=10;
+                py+=2;
             }
         }else if (strcmp(state,"up")==0){
             if(py>0){
-                py-=10;
+                py-=2;
             }
 
         }else if (strcmp(state,"left")==0){
             if(px<1280 && px>0){
-                px-=10;
+                px-=2;
             }
             dir=0;
 //here i was stuck for about 20 minutes just bcz i used =+ instead of -= .. bruh things be just overreacting walah
         }else if (strcmp(state,"right")==0){
             if(px<1280 && px>0){
-                px+=10;
+                px+=2;
             }
             dir=1;
-
         }
 
         while(SDL_PollEvent(&event)){

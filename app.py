@@ -68,9 +68,14 @@ while True:
                                 file.write("down")
                             else:
                                  file.write("x")
+        mp.solutions.drawing_utils.draw_landmarks(frame,hands_landmark,mp_hnds.HAND_CONNECTIONS)
+
+    else:
+        with open("state.txt", "w") as file:
+            file.write("x")
+
         
                 
-        mp.solutions.drawing_utils.draw_landmarks(frame,hands_landmark,mp_hnds.HAND_CONNECTIONS)
     
     cv2.imshow("webcame",frame)
 cap.release()
