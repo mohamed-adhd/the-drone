@@ -3,7 +3,9 @@
 #include <SDL2/SDL_timer.h>
 #include <stdio.h>
 #include <string.h>
+#include <syscall.h>
 int main(void){
+    system("./venv311/bin/python app.py &");
     SDL_Init(SDL_INIT_AUDIO|SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG);
     TTF_Init();
@@ -22,28 +24,29 @@ int main(void){
     int frame_d=50;
     int px=300,py=300;
     FILE* file;
-    file=fopen("state.txt","r");
+    
     bool running=true;
     SDL_Event event; //bitchass timing the mf wont start
     char state[100];
     while (running){
+        file=fopen("state.txt","r");
         fscanf(file,"%s",state);
-        if (strcmp(state,"down")){
-                    if(py<590){
-                        py+=10;
-                    }
-        }else if (strcmp(state,"up")){
+        if (strcmp(state,"down")==0){
+            if(py<720){
+                py+=10;
+            }
+        }else if (strcmp(state,"up")==0){
             if(py>0){
                 py-=10;
             }
 
-        }else if (strcmp(state,"left")){
+        }else if (strcmp(state,"left")==0){
             if(px<1280 && px>0){
                 px-=10;
             }
             dir=0;
 //here i was stuck for about 20 minutes just bcz i used =+ instead of -= .. bruh things be just overreacting walah
-        }else if (strcmp(state,"right")){
+        }else if (strcmp(state,"right")==0){
             if(px<1280 && px>0){
                 px+=10;
             }
@@ -58,7 +61,7 @@ int main(void){
             }else if (event.type==SDL_KEYDOWN){
                 SDL_KeyCode key=event.key.keysym.sym;
                 if (key==SDLK_DOWN){
-                    if(py<590){
+                    if(py<720){
                         py+=10;
                     }
                 }else if (key==SDLK_UP){

@@ -1,24 +1,41 @@
 import mediapipe as mp
 import cv2
 import time
+import math
+
+def dist(a, b):
+    return math.hypot(a.x - b.x, a.y - b.y)
+
+def finger_up(lm, tip, pip, wrist=0):
+    return dist(lm[tip], lm[wrist]) > dist(lm[pip], lm[wrist])
+
 def state(hands_landmark):
-    fingered=0
-    if hands_landmark.landmark[4].x<hands_landmark.landmark[3].x and hands_landmark.landmark[7].x>hands_landmark.landmark[6].y and hands_landmark.landmark[11].x>hands_landmark.landmark[10].y and hands_landmark.landmark[15].x>hands_landmark.landmark[14].y and hands_landmark.landmark[18].x>hands_landmark.landmark[19].y:
+    lm = hands_landmark.landmark
+    index_up  = finger_up(lm, 8, 6)
+    middle_up = finger_up(lm, 12, 10)
+    ring_up   = finger_up(lm, 16, 14)
+    pinky_up  = finger_up(lm, 20, 18)
+    thumb_closed = lm[4].x > lm[3].x
+    thumb_open   = lm[4].x < lm[3].x
+    others_down = not (index_up or middle_up or ring_up or pinky_up)
+    is_fist = (dist(lm[8], lm[0])  < dist(lm[6], lm[0])  and dist(lm[12], lm[0]) < dist(lm[10], lm[0]) and dist(lm[16], lm[0]) < dist(lm[14], lm[0]) and dist(lm[20], lm[0]) < dist(lm[18], lm[0]))
+    #print(f"idx={index_up} mid={middle_up} ring={ring_up} pinky={pinky_up} thumb_open={thumb_open}")
+    if thumb_closed and others_down:
         return 0
-    elif hands_landmark.landmark[4].x>hands_landmark.landmark[3].x and hands_landmark.landmark[7].x>hands_landmark.landmark[6].y and hands_landmark.landmark[11].x>hands_landmark.landmark[10].y and hands_landmark.landmark[15].x>hands_landmark.landmark[14].y and hands_landmark.landmark[18].x>hands_landmark.landmark[19].y:
+    elif thumb_open and others_down:
         return 1
-    elif hands_landmark.landmark[8].y<hands_landmark.landmark[5].y and hands_landmark.landmark[11].x>hands_landmark.landmark[10].y and hands_landmark.landmark[15].x>hands_landmark.landmark[14].y and hands_landmark.landmark[18].x>hands_landmark.landmark[19].y:
+    elif index_up and not (middle_up or ring_up or pinky_up):
         return 2
-    elif hands_landmark.landmark[8].y>hands_landmark.landmark[5].y and hands_landmark.landmark[11].x>hands_landmark.landmark[10].y and hands_landmark.landmark[15].x>hands_landmark.landmark[14].y and hands_landmark.landmark[18].x>hands_landmark.landmark[19].y:
-        return 3 
+    elif thumb_closed and pinky_up and ring_up and middle_up and index_up:
+        return 3
     else:
         return -1
 
 mp_hnds=mp.solutions.hands
 hands=mp_hnds.Hands()
 cap=cv2.VideoCapture(0)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 160)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 120)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 720)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
 
 if not cap :
